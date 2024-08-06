@@ -1,41 +1,40 @@
 name: Deploy Quartz site to GitHub Pages
- 
+
 on:
   push:
     branches:
       - v4
- 
+
 permissions:
   contents: read
   pages: write
   id-token: write
- 
+
 concurrency:
   group: "pages"
   cancel-in-progress: false
- 
+
 jobs:
   build:
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        node-version: [20]  # Replace with the desired Node.js version
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for git info
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
       - uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Specify the correct node version
+          cache: 'npm'
       - name: Install Dependencies
-        run: npm ci
+        run: npm install -g npm@9.3.1 # Install the required npm version
+      - run: npm ci
       - name: Build Quartz
         run: npx quartz build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: public
- 
+
   deploy:
     needs: build
     environment:
