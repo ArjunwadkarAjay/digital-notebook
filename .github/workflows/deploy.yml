@@ -17,10 +17,15 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [20]  # Replace with the desired Node.js version
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history for git info
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
       - uses: actions/setup-node@v4
       - name: Install Dependencies
         run: npm ci
